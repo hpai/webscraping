@@ -17,7 +17,6 @@ driver.wait = WebDriverWait(driver, 5)
 
 url = "http://www.imdb.com/search/title"
 driver.get(url)
-#print(driver.page_source)
 
 element = driver.find_element_by_xpath('//*[@id="title_type-1"]')
 element.click()
@@ -29,7 +28,6 @@ textbox_date_max = driver.find_element_by_name('release_date-max')
 textbox_date_min.send_keys(date_min)
 textbox_date_max.send_keys(date_max)
 
-#select = Select(driver.find_element_by_name('user_rating-min'))
 
 element = driver.find_element_by_xpath("//select[@name='user_rating-min']")
 all_options = element.find_elements_by_tag_name("option")
@@ -84,18 +82,15 @@ while count in range(8):
 
     html = driver.page_source
     soup = BeautifulSoup(html,"html.parser")
-    #print(soup)
 
     rows = []
 
     all_lists = soup.find("div", attrs = {'class' : 'lister-list'})
     for entry in all_lists.find_all("div", attrs = {'class' : 'lister-item-content'}):
-        #movie_name = entry.find("a").text
-        #cells.append(movie_name)
         cells = []
         y = entry.find('span',{'class':'lister-item-year text-muted unbold'}).text
         regex = r"\d{4}"
-        year  = ''.join(re.findall(regex, y)) #findall returns a list contains one string ex: ['2017']
+        year  = ''.join(re.findall(regex, y))
         cells.append(int(year))
 
         rating = entry.find('strong').text
@@ -104,13 +99,12 @@ while count in range(8):
         if entry.find('div', attrs = {'class' : 'inline-block ratings-metascore'}):
             meta_score = int(entry.find('span',{'class':'metascore'}).text)
         else:
-            meta_score = 0 #meta_score not present
+            meta_score = 0 #if meta_score not present
         cells.append(meta_score)
 
         i = 1
         actors = []
         for a in entry.find_all('a', href=True):
-            #print("Found: {} ".format(i), a.text)
             if i == 1:
                 movie_name = a.text
             elif i == 2:
@@ -138,20 +132,10 @@ while count in range(8):
 
     if(count  == 0):
         element = driver.find_element_by_xpath('//*[@id="main"]/div/div[4]/a')
-        #element = driver.find_element_by_xpath('//*[@id="main"]/div/div/div[4]/div/a')
     else:
         element = driver.find_element_by_xpath('//*[@id="main"]/div/div[4]/a[2]')
-         #element = driver.find_element_by_xpath('//*[@id="main"]/div/div/div[4]/div/a[2]')
     element.click()
-    #print("\n\n\n\n\n\n\n\ncount is ", count)
     count+=1
-
-    '''
-    with open('imdb_scraper.csv','a+') as csvfile:
-        writer = csv.writer(csvfile)
-        for m in rows:
-            writer.writerow(m)
-    '''
 
     for i in rows:
         ws.append(i)
